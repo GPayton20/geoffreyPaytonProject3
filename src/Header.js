@@ -1,7 +1,7 @@
 const Header = ({ children }) => {
   return (
     <header>
-      <h1>Katelyn's Reading List</h1>
+      <h1>Katelyn's Book Nook</h1>
 
       {children}
     </header>
