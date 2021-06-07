@@ -1,6 +1,6 @@
-
 const ReadingGoal = ({ booksCompleted, goal }) => {
 
+  // Calculate how close the user is to their goal, using a value from 0 to 1 to be used in transform: scale()
   const progress = Math.min((booksCompleted.length / goal), 1);
 
   return (
