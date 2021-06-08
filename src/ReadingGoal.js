@@ -10,6 +10,7 @@ const ReadingGoal = ({ booksCompleted, goal }) => {
       : <p>You have reached your goal! Great job!</p>
       }
       
+      {/* Grow or shrink progress bar */}
       <div className="progress-tracker">
         <div className="progress" style={ {transform: `scaleX(${progress})`} }></div>
       </div>
