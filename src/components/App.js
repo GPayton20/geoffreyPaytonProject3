@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
-import './styles/App.css';
-import firebase from './config/firebase.js'
+import '../styles/App.css';
+import firebase from '../config/firebase'
 import Header from './Header';
 import NavBar from './NavBar';
 import NavButton from './NavButton';
