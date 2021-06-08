@@ -326,7 +326,7 @@ button:focus {
   padding: 20px;
   position: absolute;
   text-align: center;
-  top: -100px;
+  top: -120px;
   transition: all 0.4s cubic-bezier(0.2, 0.2, 0.3, 1.8);
 ;
 }

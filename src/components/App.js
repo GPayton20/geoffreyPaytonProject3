@@ -1,6 +1,6 @@
 import { useState, useEffect, Fragment } from 'react';
-import './styles/App.css';
-import firebase from './config/firebase.js'
+import '../styles/App.css';
+import firebase from '../config/firebase'
 import Header from './Header';
 import NavBar from './NavBar';
 import NavButton from './NavButton';
@@ -40,12 +40,14 @@ function App() {
     return newList;
   }
   
+  // Update reading list items and user goal value whenever the database is updated
   useEffect( () => {
     dbRefToRead.on('value', response => setBooksToRead(updateList(response)));
     dbRefCompleted.on('value', response => setBooksCompleted(updateList(response)));
     dbRefGoal.on('value', response => setUserGoal(response.val()));
   }, []);
   
+  // Disable navigation menu when adding books or setting goal
   useEffect( () => {
     if (pageView === 'viewingLists') {
       setNavDisabled(false);

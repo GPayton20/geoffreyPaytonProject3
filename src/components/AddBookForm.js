@@ -21,12 +21,12 @@ const AddBookForm = ({ addBook, onSubmit }) => {
     if (!titleInput || !authorInput) {
       alert('Please enter a title and author')
     } else {
-
+      // Add book to list
       addBook(titleInput, authorInput);
-  
+      // Clear input elements
       setTitleInput('');
       setAuthorInput('');
-
+      // Display "Book added!" popup for 1 second, then remove
       setPopupIsVisible(true);
       setTimeout(() => {
         setPopupIsVisible(false);
