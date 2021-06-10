@@ -71,6 +71,11 @@ function App() {
     firebase.auth().signInAnonymously();
   }
 
+  // Logout user anonymously
+  const anonLogout = () => {
+    firebase.auth().signOut();
+  }
+
   // Add book to to-read List
   const addBookToRead = (title, author) => {
     dbRefToRead.push({title, author});
@@ -115,6 +120,10 @@ function App() {
             <NavButton 
               className={`${navDisabled ? "disabled" : null} ${pageView === 'settingGoal' ? "active" : null}`}
               text={`Set goal (${userGoal})`} 
+              onClick={ () => setPageView('settingGoal')} />
+            <NavButton 
+              className={`${navDisabled ? "disabled" : null}`}
+              text={`Log Out`} 
               onClick={ () => setPageView('settingGoal')} />
           </NavBar>
         }
