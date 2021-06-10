@@ -123,7 +123,8 @@ main {
   perspective: 1000px;
 }
 
-.progress-container {
+.progress-container,
+.login-container {
   background-color: var(--white-color);
   border-radius: 25px;
   font-weight: 500;

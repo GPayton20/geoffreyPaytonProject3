@@ -1,6 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
 import '../styles/App.css';
-import firebase from '../config/firebase'
+import firebase from '../config/firebase';
+import Login from './Login';
 import Header from './Header';
 import NavBar from './NavBar';
 import NavButton from './NavButton';
@@ -11,6 +12,8 @@ import SetGoalForm from './SetGoalForm';
 import Footer from './Footer';
 
 function App() {
+  const [user, setUser] = useState(null);
+
   const dbRefToRead = firebase.database().ref('/toRead');
   const dbRefCompleted = firebase.database().ref('/completed');
   const dbRefGoal = firebase.database().ref('/goal');
@@ -39,6 +42,13 @@ function App() {
    
     return newList;
   }
+
+  // Update user state when user logs in
+  useEffect( () => {
+    firebase.auth().onAuthStateChanged(firebaseUser => {
+      setUser(firebaseUser.uid);
+    })
+  }, [])
   
   // Update reading list items and user goal value whenever the database is updated
   useEffect( () => {
@@ -56,6 +66,10 @@ function App() {
     }
   }, [pageView] )
 
+  // Login user anonymously
+  const anonLogin = () => {
+    firebase.auth().signInAnonymously();
+  }
 
   // Add book to to-read List
   const addBookToRead = (title, author) => {
@@ -88,51 +102,65 @@ function App() {
 
   return (
     <Fragment>
-      
+
       <Header>
-        <NavBar>
-          <NavButton 
-            className={`${navDisabled ? "disabled" : null} ${pageView === 'addingBooks' ? "active" : null}`}
-            text="Add books"
-            onClick={ () => setPageView('addingBooks')} />
-          <NavButton 
-            className={`${navDisabled ? "disabled" : null} ${pageView === 'settingGoal' ? "active" : null}`}
-            text={`Set goal (${userGoal})`} 
-            onClick={ () => setPageView('settingGoal')} />
-        </NavBar>
+        {/* Hide navigation bar until user has logged in */}
+        {!user ? 
+        null :
+          <NavBar>
+            <NavButton 
+              className={`${navDisabled ? "disabled" : null} ${pageView === 'addingBooks' ? "active" : null}`}
+              text="Add books"
+              onClick={ () => setPageView('addingBooks')} />
+            <NavButton 
+              className={`${navDisabled ? "disabled" : null} ${pageView === 'settingGoal' ? "active" : null}`}
+              text={`Set goal (${userGoal})`} 
+              onClick={ () => setPageView('settingGoal')} />
+          </NavBar>
+        }
       </Header>
 
       <div className="wrapper">
-        <main>
- 
-          {pageView === 'addingBooks' &&
-            <AddBookForm
-              addBook={addBookToRead}
-              onSubmit={() => setPageView('viewingLists')} />
-          }
+        {/* While user is logged out, display login modal */}
+        {!user &&
+          <main>
+            <Login handleClick={anonLogin}/>
+          </main>
+        }
 
-          {pageView === 'settingGoal' &&
-            <SetGoalForm
-              currentGoal={userGoal}
-              onSubmit={setNewGoal}
-            />
-          }
+        {/* Once user is logged in, display full app */}
+        {user &&
+          <main>
+  
+            {pageView === 'addingBooks' &&
+              <AddBookForm
+                addBook={addBookToRead}
+                onSubmit={() => setPageView('viewingLists')} />
+            }
 
-          {pageView === 'viewingLists' &&
-            <Fragment>
-
-              <ReadingGoal booksCompleted={booksCompleted} goal={userGoal} />
-              <Card
-                booksToRead={booksToRead}
-                booksCompleted={booksCompleted}
-                markAsRead={markAsRead}
-                deleteBook={deleteBook}
+            {pageView === 'settingGoal' &&
+              <SetGoalForm
+                currentGoal={userGoal}
+                onSubmit={setNewGoal}
               />
+            }
 
-            </Fragment>
-          }
+            {pageView === 'viewingLists' &&
+              <Fragment>
 
-        </main>
+                <ReadingGoal booksCompleted={booksCompleted} goal={userGoal} />
+                <Card
+                  booksToRead={booksToRead}
+                  booksCompleted={booksCompleted}
+                  markAsRead={markAsRead}
+                  deleteBook={deleteBook}
+                />
+
+              </Fragment>
+            }
+
+          </main>
+        }
       </div>
 
       <Footer />
