@@ -12,12 +12,13 @@ import SetGoalForm from './SetGoalForm';
 import Footer from './Footer';
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
+  // todo This state may be redundant
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const dbRefToRead = firebase.database().ref('/toRead');
-  const dbRefCompleted = firebase.database().ref('/completed');
-  const dbRefGoal = firebase.database().ref('/goal');
+  
+  const dbRefToRead = firebase.database().ref(`users/${user}/toRead`);
+  const dbRefCompleted = firebase.database().ref(`users/${user}/completed`);
+  const dbRefGoal = firebase.database().ref(`users/${user}/goal`);
 
   const [booksToRead, setBooksToRead] = useState([]);
   const [booksCompleted, setBooksCompleted] = useState([]);
@@ -44,6 +45,7 @@ function App() {
     return newList;
   }
 
+  
   // Update user state when user logs in
   useEffect( () => {
     firebase.auth().onAuthStateChanged(firebaseUser => {
@@ -55,8 +57,8 @@ function App() {
   useEffect( () => {
     dbRefToRead.on('value', response => setBooksToRead(updateList(response)));
     dbRefCompleted.on('value', response => setBooksCompleted(updateList(response)));
-    dbRefGoal.on('value', response => setUserGoal(response.val()));
-  }, []);
+    dbRefGoal.on('value', response => setUserGoal(response.val() || 1));
+  }, [user]);
   
   // Disable navigation menu when adding books or setting goal
   useEffect( () => {
@@ -69,7 +71,9 @@ function App() {
 
   // Login user anonymously
   const anonLogin = () => {
-    firebase.auth().signInAnonymously();
+    if (!user) {
+      firebase.auth().signInAnonymously();
+    }
     setIsLoggedIn(true);
   }
 
