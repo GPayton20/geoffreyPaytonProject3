@@ -13,6 +13,7 @@ import Footer from './Footer';
 
 function App() {
   const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const dbRefToRead = firebase.database().ref('/toRead');
   const dbRefCompleted = firebase.database().ref('/completed');
@@ -46,7 +47,7 @@ function App() {
   // Update user state when user logs in
   useEffect( () => {
     firebase.auth().onAuthStateChanged(firebaseUser => {
-      setUser(firebaseUser.uid);
+      setUser(firebaseUser ? firebaseUser.uid : null);
     })
   }, [])
   
@@ -69,11 +70,13 @@ function App() {
   // Login user anonymously
   const anonLogin = () => {
     firebase.auth().signInAnonymously();
+    setIsLoggedIn(true);
   }
 
   // Logout user anonymously
   const anonLogout = () => {
     firebase.auth().signOut();
+    setIsLoggedIn(false);
   }
 
   // Add book to to-read List
@@ -110,7 +113,7 @@ function App() {
 
       <Header>
         {/* Hide navigation bar until user has logged in */}
-        {!user ? 
+        {!isLoggedIn ? 
         null :
           <NavBar>
             <NavButton 
@@ -124,21 +127,21 @@ function App() {
             <NavButton 
               className={`${navDisabled ? "disabled" : null}`}
               text={`Log Out`} 
-              onClick={ () => setPageView('settingGoal')} />
+              onClick={anonLogout} />
           </NavBar>
         }
       </Header>
 
       <div className="wrapper">
         {/* While user is logged out, display login modal */}
-        {!user &&
+        {!isLoggedIn &&
           <main>
             <Login handleClick={anonLogin}/>
           </main>
         }
 
         {/* Once user is logged in, display full app */}
-        {user &&
+        {isLoggedIn &&
           <main>
   
             {pageView === 'addingBooks' &&
