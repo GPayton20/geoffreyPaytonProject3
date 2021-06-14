@@ -13,7 +13,6 @@ import Footer from './Footer';
 
 function App() {
   const [user, setUser] = useState();
-  // todo This state may be redundant
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const dbRefToRead = firebase.database().ref(`users/${user}/toRead`);
